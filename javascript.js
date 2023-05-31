@@ -25,6 +25,14 @@ const gameboard = (() => {
     }
   }
 
+  const getBoard = () => board;
+
+  const markCell = (row, column, player) => {
+    if (board[row][column].value) return;
+
+    board[row][column].markCell(player);
+  };
+
   const printBoard = () => {
     const boardWithCellValues = board.map((row) =>
       row.map((cell) => cell.getValue())
@@ -32,7 +40,8 @@ const gameboard = (() => {
     console.log(boardWithCellValues);
   };
 
-  return { printBoard };
+  return { getBoard, markCell, printBoard };
 })();
 
+gameboard.markCell(0, 0, "0");
 gameboard.printBoard();
