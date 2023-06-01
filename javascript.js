@@ -29,7 +29,6 @@ const gameboard = (() => {
 
   const markCell = (row, column, player) => {
     if (board[row][column].value) return;
-
     board[row][column].markCell(player);
   };
 
@@ -43,5 +42,51 @@ const gameboard = (() => {
   return { getBoard, markCell, printBoard };
 })();
 
-gameboard.markCell(0, 0, "0");
-gameboard.printBoard();
+const gameController = ((
+  playerOneName = "Player One",
+  playerTwoName = "Player Two"
+) => {
+  const board = gameboard;
+
+  const players = [
+    {
+      name: playerOneName,
+      token: "X",
+    },
+    {
+      name: playerTwoName,
+      token: "0",
+    },
+  ];
+
+  const setNames = (playerOneNewName, playerTwoNewName) => {
+    players[0].name = playerOneNewName;
+    players[1].name = playerTwoNewName;
+  };
+
+  let activePlayer = players[0];
+
+  const switchPlayerTurn = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  };
+
+  const getActivePlayer = () => activePlayer;
+
+  const printNewRound = () => {
+    board.printBoard();
+    console.log(`${getActivePlayer().name}'s turn.`);
+  };
+
+  const playRound = (row, column) => {
+    console.log(`${getActivePlayer().name} marks row ${row} column ${column}`);
+    board.markCell(row, column, getActivePlayer().token);
+    switchPlayerTurn();
+    printNewRound();
+  };
+
+  printNewRound();
+
+  return { playRound, getActivePlayer, setNames };
+})();
+
+gameController.setNames("Julian", "PC");
