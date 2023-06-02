@@ -28,8 +28,9 @@ const gameboard = (() => {
   const getBoard = () => board;
 
   const markCell = (row, column, player) => {
-    if (board[row][column].value) return;
+    if (board[row][column].getValue()) return;
     board[row][column].markCell(player);
+    return true;
   };
 
   const printBoard = () => {
@@ -42,19 +43,16 @@ const gameboard = (() => {
   return { getBoard, markCell, printBoard };
 })();
 
-const gameController = ((
-  playerOneName = "Player One",
-  playerTwoName = "Player Two"
-) => {
+const gameController = (() => {
   const board = gameboard;
 
   const players = [
     {
-      name: playerOneName,
+      name: "Player One",
       token: "X",
     },
     {
-      name: playerTwoName,
+      name: "Player Two",
       token: "0",
     },
   ];
@@ -79,9 +77,13 @@ const gameController = ((
 
   const playRound = (row, column) => {
     console.log(`${getActivePlayer().name} marks row ${row} column ${column}`);
-    board.markCell(row, column, getActivePlayer().token);
-    switchPlayerTurn();
-    printNewRound();
+    if (board.markCell(row, column, getActivePlayer().token) === true) {
+      switchPlayerTurn();
+      printNewRound();
+    } else {
+      console.log("Cell already occupied");
+      printNewRound();
+    }
   };
 
   printNewRound();
