@@ -1,0 +1,45 @@
+:root {
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  margin: 0px;
+  padding: 0px;
+  background-color: beige;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.header {
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 10vh;
+  border-bottom: solid;
+  background-color: bisque;
+
+}
+
+.grid {
+  width: 600px;
+  height: 600px;
+  margin: 100px auto;
+  background-color: #9badbe;
+  color: #fff;
+  border: 6px solid rgb(173, 69, 221);
+  border-radius: 10px;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.cell {
+  border: 6px solid rgb(181, 118, 211);
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

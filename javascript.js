@@ -91,4 +91,9 @@ const gameController = (() => {
   return { playRound, getActivePlayer, setNames };
 })();
 
+const displayController = (() => {
+  console.log("Test123");
+})();
+
 gameController.setNames("Julian", "PC");
+displayController;
