@@ -53,7 +53,7 @@ const gameController = (() => {
     },
     {
       name: "Player Two",
-      token: "0",
+      token: "O",
     },
   ];
 
@@ -88,12 +88,49 @@ const gameController = (() => {
 
   printNewRound();
 
-  return { playRound, getActivePlayer, setNames };
+  return { playRound, getActivePlayer, setNames, getBoard: board.getBoard };
 })();
 
 const displayController = (() => {
-  console.log("Test123");
+  const game = gameController;
+  const infoDiv = document.querySelector(".info");
+  const boardDiv = document.querySelector(".grid");
+
+  const updateScreen = () => {
+    boardDiv.textContent = "";
+
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    infoDiv.textContent = `${activePlayer.name}'s turn...`;
+
+    board.forEach((row, rowindex) => {
+      row.forEach((cell, colindex) => {
+        const cellButton = document.createElement("button");
+        const cellValue = cell.getValue();
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = rowindex;
+        cellButton.dataset.column = colindex;
+        cellValue === 0
+          ? (cellButton.textContent = "")
+          : (cellButton.textContent = cellValue);
+        boardDiv.appendChild(cellButton);
+      });
+    });
+  };
+
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+
+    if (!(selectedRow && selectedColumn)) return;
+
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  updateScreen();
 })();
 
-gameController.setNames("Julian", "PC");
 displayController;
