@@ -15,15 +15,16 @@ const cell = () => {
 
 const gameboard = (() => {
   const rows = 3;
-  const columns = 3;
   const board = [];
 
   for (let i = 0; i < rows; i++) {
     board[i] = [];
-    for (let j = 0; j < columns; j++) {
+    for (let j = 0; j < rows; j++) {
       board[i].push(cell());
     }
   }
+
+  const getRows = () => rows;
 
   const getBoard = () => board;
 
@@ -40,19 +41,20 @@ const gameboard = (() => {
     console.log(boardWithCellValues);
   };
 
-  return { getBoard, markCell, printBoard };
+  return { getBoard, markCell, printBoard, getRows };
 })();
 
 const gameController = (() => {
   const board = gameboard;
+  const rows = board.getRows();
 
   const players = [
     {
-      name: "Player One",
+      name: "Julian",
       token: "X",
     },
     {
-      name: "Player Two",
+      name: "Hyo",
       token: "O",
     },
   ];
@@ -63,16 +65,88 @@ const gameController = (() => {
   };
 
   let activePlayer = players[0];
+  let lastPlayer = players[1];
 
   const switchPlayerTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    lastPlayer = lastPlayer === players[0] ? players[1] : players[0];
   };
 
   const getActivePlayer = () => activePlayer;
 
   const printNewRound = () => {
     board.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
+    checkWinner();
+    if (checkWinner()) {
+      console.log(checkWinner().name);
+      return `${checkWinner().name} wins!!!`;
+    } else if (!checkDraw()) {
+      console.log("Game Over");
+      return `Game Over - It's a draw!`;
+    } else {
+      console.log(`${getActivePlayer().name}'s turn.`);
+      return `${getActivePlayer().name}'s turn.`;
+    }
+  };
+
+  const checkDraw = () => {
+    let empty = 0;
+    //draw
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < rows; j++) {
+        const val = board.getBoard()[i][j].getValue();
+        if (val == 0) empty += 1;
+      }
+    }
+
+    return empty;
+  };
+
+  const checkWinner = () => {
+    const player = lastPlayer;
+    const token = lastPlayer.token;
+
+    // check rows for three
+    for (let i = 0; i < rows; i++) {
+      if (
+        board.getBoard()[i][0].getValue() === token &&
+        board.getBoard()[i][1].getValue() === token &&
+        board.getBoard()[i][2].getValue() === token
+      ) {
+        return player;
+      }
+    }
+
+    // check columns for three
+    for (let i = 0; i < rows; i++) {
+      if (
+        board.getBoard()[0][i].getValue() === token &&
+        board.getBoard()[1][i].getValue() === token &&
+        board.getBoard()[2][i].getValue() === token
+      ) {
+        return player;
+      }
+    }
+
+    // check for diagonal 1
+    if (
+      board.getBoard()[0][0].getValue() === token &&
+      board.getBoard()[1][1].getValue() === token &&
+      board.getBoard()[2][2].getValue() === token
+    ) {
+      return player;
+    }
+
+    // check for diagonal 2
+    if (
+      board.getBoard()[2][0].getValue() === token &&
+      board.getBoard()[1][1].getValue() === token &&
+      board.getBoard()[0][2].getValue() === token
+    ) {
+      return player;
+    }
+
+    return 0;
   };
 
   const playRound = (row, column) => {
@@ -88,7 +162,13 @@ const gameController = (() => {
 
   printNewRound();
 
-  return { playRound, getActivePlayer, setNames, getBoard: board.getBoard };
+  return {
+    playRound,
+    getActivePlayer,
+    setNames,
+    printNewRound,
+    getBoard: board.getBoard,
+  };
 })();
 
 const displayController = (() => {
@@ -100,9 +180,8 @@ const displayController = (() => {
     boardDiv.textContent = "";
 
     const board = game.getBoard();
-    const activePlayer = game.getActivePlayer();
 
-    infoDiv.textContent = `${activePlayer.name}'s turn...`;
+    infoDiv.textContent = game.printNewRound();
 
     board.forEach((row, rowindex) => {
       row.forEach((cell, colindex) => {
